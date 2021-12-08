@@ -40,6 +40,7 @@ static NSString *const kScrollViewKVOContentOffsetKey = @"contentOffset";
 // kvo
 @property (nonatomic, strong) id observerToken;
 @property (nonatomic, assign) CGFloat scrollViewYOffset;
+@property (nonatomic, assign) CGSize contentSize;
 
 @end
 
@@ -347,8 +348,8 @@ static NSString *const kScrollViewKVOContentOffsetKey = @"contentOffset";
         self.observerToken = nil;
         return;
     }
-    
     self.scrollViewYOffset = MAX(scrollView.contentOffset.y, -(MAX(scrollView.contentInset.top, 0)));
+    self.contentSize = scrollView.contentSize;
     self.observerToken = [KeyValueObserver observeObject:scrollView keyPath:kScrollViewKVOContentOffsetKey target:self selector:@selector(didPanOnScrollViewChanged:) options:NSKeyValueObservingOptionOld];
 }
 
@@ -358,6 +359,7 @@ static NSString *const kScrollViewKVOContentOffsetKey = @"contentOffset";
 */
 - (void)trackScrolling:(UIScrollView *)scrollView {
     self.scrollViewYOffset = MAX(scrollView.contentOffset.y, -(MAX(scrollView.contentInset.top, 0)));
+    self.contentSize = scrollView.contentSize;
     scrollView.showsVerticalScrollIndicator = [[self presentable] showsScrollableVerticalScrollIndicator];
 }
 
@@ -365,8 +367,11 @@ static NSString *const kScrollViewKVOContentOffsetKey = @"contentOffset";
  * Halts the scroll of a given scroll view & anchors it at the `scrollViewYOffset`
  */
 - (void)haltScrolling:(UIScrollView *)scrollView {
-    [scrollView setContentOffset:CGPointMake(0, self.scrollViewYOffset) animated:NO];
-    scrollView.showsVerticalScrollIndicator = NO;
+    //ignore event when contentSize changed
+    if (CGSizeEqualToSize(self.contentSize, scrollView.contentSize)) {
+        [scrollView setContentOffset:CGPointMake(0, self.scrollViewYOffset) animated:NO];
+        scrollView.showsVerticalScrollIndicator = NO;
+    }
 }
 
 - (void)didPanOnScrollViewChanged:(NSDictionary<NSKeyValueChangeKey, id> *)change {
