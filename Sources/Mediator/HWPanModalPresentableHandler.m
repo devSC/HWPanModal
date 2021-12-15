@@ -359,8 +359,11 @@ static NSString *const kScrollViewKVOContentOffsetKey = @"contentOffset";
 */
 - (void)trackScrolling:(UIScrollView *)scrollView {
     self.scrollViewYOffset = MAX(scrollView.contentOffset.y, -(MAX(scrollView.contentInset.top, 0)));
+//    BOOL showsVerticalScrollIndicator = [[self presentable] showsScrollableVerticalScrollIndicator];
+//    if (scrollView.showsVerticalScrollIndicator != showsVerticalScrollIndicator) {
+//        scrollView.showsVerticalScrollIndicator = showsVerticalScrollIndicator;
+//    }
     self.contentSize = scrollView.contentSize;
-    scrollView.showsVerticalScrollIndicator = [[self presentable] showsScrollableVerticalScrollIndicator];
 }
 
 /**
@@ -370,7 +373,7 @@ static NSString *const kScrollViewKVOContentOffsetKey = @"contentOffset";
     //ignore event when contentSize changed
     if (CGSizeEqualToSize(self.contentSize, scrollView.contentSize)) {
         [scrollView setContentOffset:CGPointMake(0, self.scrollViewYOffset) animated:NO];
-        scrollView.showsVerticalScrollIndicator = NO;
+//        scrollView.showsVerticalScrollIndicator = NO;
     }
 }
 
@@ -418,7 +421,7 @@ static NSString *const kScrollViewKVOContentOffsetKey = @"contentOffset";
     if ([self.presentable panScrollable] && ![self.presentable panScrollable].isScrolling) {
         UIScrollView *scrollView = [self.presentable panScrollable];
         // 禁用scrollView indicator除非用户开始滑动scrollView
-        scrollView.showsVerticalScrollIndicator = [self.presentable showsScrollableVerticalScrollIndicator];
+//        scrollView.showsVerticalScrollIndicator = [self.presentable showsScrollableVerticalScrollIndicator];
         scrollView.scrollEnabled = [self.presentable isPanScrollEnabled];
         scrollView.scrollIndicatorInsets = [self.presentable scrollIndicatorInsets];
         
